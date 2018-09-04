@@ -8,12 +8,12 @@ import (
 	"os"
 	"testing"
 
+	"github.com/chrootlogin/go-docstore/internal/api/v1/user"
 	"github.com/chrootlogin/go-docstore/internal/common"
 	"github.com/chrootlogin/go-docstore/internal/helper"
 	"github.com/chrootlogin/go-docstore/internal/store"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/chrootlogin/go-docstore/internal/api/v1/user"
 )
 
 func TestGetAuthMiddleware(t *testing.T) {
@@ -113,6 +113,7 @@ func TestAuthMiddleware_MiddlewareFunc(t *testing.T) {
 
 	assert.Equal(http.StatusUnauthorized, w.Code)
 }
+
 /*
 func TestAuthMiddleware_MiddlewareFunc2(t *testing.T) {
 	assert := assert.New(t)

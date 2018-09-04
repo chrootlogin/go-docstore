@@ -1,8 +1,8 @@
 package user
 
 import (
-	"net/http"
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 

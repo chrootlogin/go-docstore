@@ -7,10 +7,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/chrootlogin/go-docstore/internal/common"
+	"github.com/chrootlogin/go-docstore/internal/store"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/chrootlogin/go-docstore/internal/store"
-	"github.com/chrootlogin/go-docstore/internal/common"
 )
 
 // try existing user
@@ -21,7 +21,7 @@ func TestGetUserHandler(t *testing.T) {
 
 	u := common.User{
 		Username: "test-user",
-		Email: "test@example.com",
+		Email:    "test@example.com",
 	}
 
 	err := store.Users().Add(u)
@@ -29,7 +29,7 @@ func TestGetUserHandler(t *testing.T) {
 		r := gin.Default()
 		r.GET("/user/*username", GetUserHandler)
 
-		req, _ := http.NewRequest("GET", "/user/" + u.Username, nil)
+		req, _ := http.NewRequest("GET", "/user/"+u.Username, nil)
 		r.ServeHTTP(w, req)
 
 		if assert.Equal(w.Code, http.StatusOK) {

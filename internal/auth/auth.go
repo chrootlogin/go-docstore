@@ -65,7 +65,7 @@ func (am *AuthMiddleware) MiddlewareFunc() gin.HandlerFunc {
 			})
 
 			if err != nil {
-				c.Header("WWW-Authenticate", "JWT realm="+am.Realm)
+				am.jwtHeader(c)
 				c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{Message: err.Error()})
 				return
 			}
@@ -76,7 +76,7 @@ func (am *AuthMiddleware) MiddlewareFunc() gin.HandlerFunc {
 			// check if user exits
 			user, err = store.Users().Get(userId)
 			if err != nil {
-				c.Header("WWW-Authenticate", "JWT realm="+am.Realm)
+				am.jwtHeader(c)
 				c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{Message: err.Error()})
 				return
 			}
@@ -85,19 +85,13 @@ func (am *AuthMiddleware) MiddlewareFunc() gin.HandlerFunc {
 			loggedIn = true
 		}
 
-		// if not logged in and trying to do a changing action
-		if !loggedIn /*&& (c.Request.Method == "POST" || c.Request.Method == "PUT" || c.Request.Method == "DELETE")*/ {
-			c.Header("WWW-Authenticate", "JWT realm="+am.Realm)
+		if !loggedIn {
+			am.jwtHeader(c)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{Message: "You need to be logged in to perform this action."})
 			return
 		}
 
-		c.Set("loggedIn", loggedIn)
-
-		// on login set user identity
-		if loggedIn {
-			c.Set("user", user)
-		}
+		c.Set("user", user)
 
 		// go further
 		c.Next()
@@ -130,7 +124,7 @@ func (am *AuthMiddleware) LoginHandler(c *gin.Context) {
 
 		tokenString, err := token.SignedString(am.Key)
 		if err != nil {
-			c.Header("WWW-Authenticate", "JWT realm="+am.Realm)
+			am.jwtHeader(c)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{Message: "Creating JWT token failed."})
 			return
 		}
@@ -145,6 +139,10 @@ func (am *AuthMiddleware) LoginHandler(c *gin.Context) {
 }
 
 func (am *AuthMiddleware) wrongUsernamePassword(c *gin.Context) {
-	c.Header("WWW-Authenticate", "JWT realm="+am.Realm)
+	am.jwtHeader(c)
 	c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{Message: "Wrong username or password."})
+}
+
+func (am *AuthMiddleware) jwtHeader(c *gin.Context) {
+	c.Header("WWW-Authenticate", "JWT realm="+am.Realm)
 }
