@@ -13,6 +13,7 @@ import (
 	"github.com/chrootlogin/go-docstore/internal/store"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/chrootlogin/go-docstore/internal/api/v1/user"
 )
 
 func TestGetAuthMiddleware(t *testing.T) {
@@ -92,38 +93,27 @@ func TestAuthMiddleware_LoginHandler2(t *testing.T) {
 	}
 }
 
-/*
-
 func TestAuthMiddleware_MiddlewareFunc(t *testing.T) {
 	assert := assert.New(t)
 
-	apiReq := map[string]string{
-		"content": "admin",
+	w := httptest.NewRecorder()
+
+	os.Setenv("SESSION_KEY", "not-a-secret-key")
+	am := GetAuthMiddleware()
+
+	r := gin.Default()
+	api := r.Group("/api/")
+	api.Use(am.MiddlewareFunc())
+	{
+		api.GET("/user/*username", user.GetUserHandler)
 	}
 
-	data, err := json.Marshal(apiReq)
-	if assert.NoError(err) {
-		w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/user/non-existing", nil)
+	r.ServeHTTP(w, req)
 
-		os.Setenv("SESSION_KEY", "not-a-secret-key")
-		am := GetAuthMiddleware()
-
-		r := gin.Default()
-		api := r.Group("/api/")
-		api.Use(am.MiddlewareFunc())
-		{
-			//api.POST("/page/*path", page.PostPageHandler)
-		}
-
-		req, _ := http.NewRequest("POST", "/api/page/", bytes.NewReader(data))
-		req.Header.Add("Content-Type", "application/json")
-		req.Header.Add("Content-Length", string(len(data)))
-		r.ServeHTTP(w, req)
-
-		assert.Equal(http.StatusUnauthorized, w.Code)
-	}
+	assert.Equal(http.StatusUnauthorized, w.Code)
 }
-
+/*
 func TestAuthMiddleware_MiddlewareFunc2(t *testing.T) {
 	assert := assert.New(t)
 

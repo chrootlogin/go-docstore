@@ -86,7 +86,7 @@ func (am *AuthMiddleware) MiddlewareFunc() gin.HandlerFunc {
 		}
 
 		// if not logged in and trying to do a changing action
-		if !loggedIn && (c.Request.Method == "POST" || c.Request.Method == "PUT" || c.Request.Method == "DELETE") {
+		if !loggedIn /*&& (c.Request.Method == "POST" || c.Request.Method == "PUT" || c.Request.Method == "DELETE")*/ {
 			c.Header("WWW-Authenticate", "JWT realm="+am.Realm)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.ApiResponse{Message: "You need to be logged in to perform this action."})
 			return
