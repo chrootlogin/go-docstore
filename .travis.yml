@@ -11,7 +11,7 @@ jobs:
       sonarcloud:
         organization: chrootlogin-github
         token:
-          secure: PF0uZsYywyWbKOaLM6tZ0D9RLGRcq35Yt9wqSvqCLhInQiMO76Octe/UpH5TXRVeMXqIyzwIO9jladebaHug/wBzw4Bdpbk/vnhAAMKLoPJJkExoF55tQ4ex9yZ+4wXuHVX56LR4gA8MiMTZmzNGikYLTv22IjT5p2jd5O5vLLjwvPm7GTxVLAYQKUscw7DG+ojVvKRjKwKUH1AL89newm+V1iTxHM0g0cZ585Ayp6W69pwf4fpIl/ldFBFbwfwxnm7yrPfFB7m/y2ZAWkHoJIiwXwXXchQ4cs/fTLk2A0v1CXA1jZH4BAJHUbZXGLlVrRmy7uEy8YC2wnMUPLgYrmUF0luNbG9KjRgkeleW1osHQZHDD7JLbblQulBtX8eEgCPoNMD6FdC32Ee+SmD2XhvOw+S97VLtRpTxdCSt391pp13TY49zK1Eln9sive6FLWrTbFZ03KWJSJbIaFfMuwMOYEREM/2GZwput/4KnwG/TkaDMI9Xz0HzWyzb9Sx9+rv0LtSqBP3N7WYN7IafUg12PjOH78zxU56nyVPcSgFC8HOhpBwDWqYY/PZf0bZK8ulepUWk7MbhiEYCuYmir2NnuX53Ribf3uYUktrpd0mQk0vjtM5sU4M/iBdKfNTgGdM1gjxx5ltxoyPxUfZddsz6wmEN8a88eAV7rxbwUYU=
+          secure: q+ozIMpRwgMEpJMxe1yxCYBT4vPDqQReetUTsw74zwdHfOb4uZzkZxFQ3Ji7O3ULukI0C1WksSu5WME5K6CKEmzNfWCkBomZRKpvcaOQms8DjFEWZr8AcHbyuolFDDLHg/g3nCdC2znT+0h89+ApWeUnSK74uT/CMAF70pI1QsbL8pbssjpjY++2VW2aMrcnxqF+KMy7rcIkzQ0GXW8MQmK5uxKsYkJKD/Gwelj+PQFpi/gyzAHatkiNwxgL/l/fS/1UiJSw/Ph1wuoA2XqOUbdP92wqZinX8BXXuAxE1YUxdk8rAbc5RrYJBarSWP3otsPw9J+0IRuVUaj9L1mZzHKaRySgUt/IvcD1SGSTrtzJ0/5fkS2Q2059YZpuRicFr/ZZp3pNTqd41b6745hExxHrPHxzg3Mn/dZNyVy1Z68f6D/UTZkAZqQBxyps6rw48wbJNGdNUZi98yyyL/OTYuwufhtXXXQx/tb4QWSrmxdpoavNdTeCH+Vvu4p616reLibO2bKtF+zdSRJWcH7IRFzaQv0OIyTDXo+EMT1YPsQ4177d+haXlLokTmMOqyX8SuMrRk64Yyq5uNovd/214uWLgmMnL0lHKuftJZtybQU0aPxTl0AMQ7oTCtwS7Sj/i9lAe+6U2J5JHTDJ/XtNZnNk9EOV0WvF6OSvbrpsECg=
 
     cache:
       directories:
@@ -19,43 +19,12 @@ jobs:
 
     before_script:
     - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-    - go get -u github.com/go-bindata/go-bindata/...
 
     install:
     - # skip
 
     script:
-    - make dependencies go_bindata
+    - make deps
     - go test -json -coverprofile=coverage.out ./... > test-report.out
     - sonar-scanner
     - make go_app
-
-    deploy:
-    - provider: script
-      script: curl -T "go-wiki" -u "$BINTRAY_USER:$BINTRAY_API_KEY" -H "X-Bintray-Publish:1" -H "X-Bintray-Package:linux" -H "X-Bintray-Version:latest-$(date +%Y-%m-%d)" -H "X-Bintray-Override:1" "https://api.bintray.com/content/rootlogin/go-wiki/latest-$(date +%Y-%m-%d)/go-wiki"
-      skip_cleanup: true
-      on:
-        branch: master
-
-    - provider: script
-      script: curl -T "go-wiki" -u "$BINTRAY_USER:$BINTRAY_API_KEY" -H "X-Bintray-Publish:1" -H "X-Bintray-Package:linux" -H "X-Bintray-Version:$TRAVIS_TAG" -H "X-Bintray-Override:1" "https://api.bintray.com/content/rootlogin/go-wiki/$TRAVIS_TAG/go-wiki"
-      skip_cleanup: true
-      on:
-        tags: true
-
-  - language: go
-    go: 1.11.x
-    sudo: required
-
-    if: (tag =~ ^v) OR (branch IN (master, develop))
-
-    services:
-    - docker
-
-    script:
-    - export DOCKER_TAG=$(if [[ $TRAVIS_BRANCH == "master" ]]; then echo "latest"; else echo $TRAVIS_BRANCH; fi)
-    - docker build --build-arg VCS_REF=$(git rev-parse --short HEAD) --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") -t $DOCKER_REPO:$DOCKER_TAG .
-
-    after_success:
-    - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USER --password-stdin
-    - docker push $DOCKER_REPO:$DOCKER_TAG
