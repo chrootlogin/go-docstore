@@ -12,9 +12,8 @@ import (
 	"gopkg.in/dgrijalva/jwt-go.v3"
 
 	"github.com/chrootlogin/go-docstore/internal/common"
-
-	"github.com/chrootlogin/go-docstore/internal/store"
 	"github.com/chrootlogin/go-docstore/internal/helper"
+	"github.com/chrootlogin/go-docstore/internal/store"
 )
 
 type AuthMiddleware struct {

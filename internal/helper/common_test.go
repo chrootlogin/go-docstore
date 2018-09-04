@@ -4,6 +4,13 @@ import (
 	"testing"
 )
 
+func TestHashPassword(t *testing.T) {
+	_, err := HashPassword("a-password")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestCheckPasswordHash(t *testing.T) {
 	type TestMatrix struct {
 		ClearTextPassword string

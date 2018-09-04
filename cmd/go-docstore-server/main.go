@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 
 	router_v1 "github.com/chrootlogin/go-docstore/internal/api/v1/router"
+	"github.com/chrootlogin/go-docstore/internal/auth"
 
 	// auto load env files
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/chrootlogin/go-docstore/internal/auth"
 )
 
 var port = ""

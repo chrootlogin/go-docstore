@@ -8,11 +8,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-	"github.com/chrootlogin/go-docstore/internal/store"
 	"github.com/chrootlogin/go-docstore/internal/common"
 	"github.com/chrootlogin/go-docstore/internal/helper"
+	"github.com/chrootlogin/go-docstore/internal/store"
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetAuthMiddleware(t *testing.T) {
@@ -62,9 +62,9 @@ func TestAuthMiddleware_LoginHandler2(t *testing.T) {
 	hash, err := helper.HashPassword(PASSWORD)
 	if assert.NoError(err) {
 		store.Users().Add(common.User{
-			Username: "admin",
+			Username:     "admin",
 			PasswordHash: hash,
-			Email: "admin@example.org",
+			Email:        "admin@example.org",
 		})
 
 		apiReq := ApiLogin{
