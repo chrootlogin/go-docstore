@@ -94,6 +94,48 @@ func TestAuthMiddleware_LoginHandler2(t *testing.T) {
 	}
 }
 
+// wrong password
+func TestAuthMiddleware_LoginHandler3(t *testing.T) {
+	assert := assert.New(t)
+
+	const (
+		USERNAME = "admin2"
+	    PASSWORD = "test1234"
+	)
+
+	hash, err := helper.HashPassword(PASSWORD)
+	if assert.NoError(err) {
+		store.Users().Add(common.User{
+			Username:     USERNAME,
+			PasswordHash: hash,
+			Email:        "admin2@example.org",
+		})
+
+		apiReq := ApiLogin{
+			Username: USERNAME,
+			Password: "wrong-password",
+		}
+
+		data, err := json.Marshal(apiReq)
+		if assert.NoError(err) {
+			w := httptest.NewRecorder()
+
+			os.Setenv("SESSION_KEY", "not-a-secret-key")
+			am := GetAuthMiddleware()
+
+			r := gin.Default()
+			r.POST("/user/login", am.LoginHandler)
+
+			req, _ := http.NewRequest("POST", "/user/login", bytes.NewReader(data))
+			req.Header.Add("Content-Type", "application/json")
+			req.Header.Add("Content-Length", string(len(data)))
+			r.ServeHTTP(w, req)
+
+			assert.Equal(http.StatusUnauthorized, w.Code)
+		}
+	}
+}
+
 func TestAuthMiddleware_MiddlewareFunc(t *testing.T) {
 	assert := assert.New(t)
 
@@ -182,8 +224,6 @@ func TestAuthMiddleware_MiddlewareFunc2(t *testing.T) {
 			}
 		}
 	}
-
-
 }
 
 
