@@ -2,7 +2,6 @@ package store
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/asdine/storm"
@@ -26,7 +25,6 @@ type userList struct{}
 func (ul *userList) Get(username string) (*common.User, error) {
 	u, found := userCache.Get(username)
 	if found {
-		fmt.Println(fmt.Sprintf("found cache %v", u))
 		return u.(*common.User), nil
 	}
 
@@ -66,8 +64,6 @@ func (ul *userList) Delete(username string) error {
 
 	// remove from cache
 	userCache.Delete(user.Username)
-
-	fmt.Println(userCache.Items())
 
 	// delete from database
 	return database.DB().Users().DeleteStruct(user)

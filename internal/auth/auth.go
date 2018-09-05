@@ -133,6 +133,7 @@ func (am *AuthMiddleware) LoginHandler(c *gin.Context) {
 			"token":  tokenString,
 			"expire": expire.Format(time.RFC3339),
 		})
+		return
 	}
 
 	am.wrongUsernamePassword(c)
