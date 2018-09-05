@@ -61,3 +61,9 @@ func DB() *db {
 func (d *db) Users() storm.Node {
 	return d.db.From("users")
 }
+
+func (d *db) Documents() IDocumentsDB {
+	return &DocumentsDB{
+		d.db.From("documents"),
+	}
+}

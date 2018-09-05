@@ -7,5 +7,5 @@ import (
 )
 
 func InitRouter(g *gin.RouterGroup) {
-	g.GET("/", user.GetUserHandler)
+	g.GET("/user/*username", user.GetUserHandler)
 }

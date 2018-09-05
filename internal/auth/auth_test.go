@@ -100,7 +100,7 @@ func TestAuthMiddleware_LoginHandler3(t *testing.T) {
 
 	const (
 		USERNAME = "admin2"
-	    PASSWORD = "test1234"
+		PASSWORD = "test1234"
 	)
 
 	hash, err := helper.HashPassword(PASSWORD)
@@ -164,7 +164,7 @@ func TestAuthMiddleware_MiddlewareFunc2(t *testing.T) {
 	const (
 		USERNAME = "testuser"
 		PASSWORD = "test1234"
-		EMAIL = "testuser@example.org"
+		EMAIL    = "testuser@example.org"
 	)
 
 	hash, err := helper.HashPassword(PASSWORD)
@@ -213,7 +213,7 @@ func TestAuthMiddleware_MiddlewareFunc2(t *testing.T) {
 								api.GET("/user/*username", user.GetUserHandler)
 							}
 
-							req, _ := http.NewRequest("GET", "/api/user/" + USERNAME, nil)
+							req, _ := http.NewRequest("GET", "/api/user/"+USERNAME, nil)
 							req.Header.Add("Authorization", "Bearer "+resp["token"])
 							r.ServeHTTP(w, req)
 
@@ -225,7 +225,6 @@ func TestAuthMiddleware_MiddlewareFunc2(t *testing.T) {
 		}
 	}
 }
-
 
 func TestAuthMiddleware_MiddlewareFunc3(t *testing.T) {
 	assert := assert.New(t)

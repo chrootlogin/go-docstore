@@ -1,10 +1,10 @@
 package store
 
 import (
-	"errors"
 	"time"
 
 	"github.com/asdine/storm"
+	"github.com/google/uuid"
 	"github.com/patrickmn/go-cache"
 
 	"github.com/chrootlogin/go-docstore/internal/common"
@@ -12,8 +12,7 @@ import (
 )
 
 var (
-	userCache       *cache.Cache
-	ErrUserNotExist = errors.New("user does not exist")
+	userCache *cache.Cache
 )
 
 func init() {
@@ -44,8 +43,16 @@ func (ul *userList) Get(username string) (*common.User, error) {
 }
 
 func (ul *userList) Add(user common.User) error {
+	// create UUID for user
+	uid, err := uuid.NewUUID()
+	if err != nil {
+		return err
+	}
+
+	user.ID = uid
+
 	// add user to database
-	err := database.DB().Users().Save(&user)
+	err = database.DB().Users().Save(&user)
 	if err != nil {
 		return err
 	}

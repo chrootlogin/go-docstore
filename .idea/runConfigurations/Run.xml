@@ -3,6 +3,9 @@
     <module name="go-docstore" />
     <working_directory value="$PROJECT_DIR$" />
     <go_parameters value="-i" />
+    <envs>
+      <env name="SESSION_KEY" value="not-a-secure-key" />
+    </envs>
     <kind value="PACKAGE" />
     <filePath value="$PROJECT_DIR$/cmd/go-docstore-server/main.go" />
     <package value="github.com/chrootlogin/go-docstore/cmd/go-docstore-server" />

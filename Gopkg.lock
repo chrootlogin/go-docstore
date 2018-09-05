@@ -70,6 +70,14 @@
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:5247b135b5492aa232a731acdcb52b08f32b874cb398f21ab460396eadbe866b"
+  name = "github.com/google/uuid"
+  packages = ["."]
+  pruneopts = ""
+  revision = "d460ce9f8df2e77fb1ba55ca87fafed96c607494"
+  version = "v1.0.0"
+
+[[projects]]
   digest = "1:442baaf193e432b3432e26465fb36aed31484866ddb0ee11f68caceb130e317e"
   name = "github.com/joho/godotenv"
   packages = [
@@ -195,6 +203,7 @@
     "github.com/asdine/storm/codec/json",
     "github.com/gin-contrib/cors",
     "github.com/gin-gonic/gin",
+    "github.com/google/uuid",
     "github.com/joho/godotenv/autoload",
     "github.com/patrickmn/go-cache",
     "github.com/stretchr/testify/assert",
