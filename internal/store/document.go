@@ -19,9 +19,9 @@ func init() {
 type documents struct{}
 
 func (d *documents) Create(path string, content []byte) error {
-	database.DB().Documents().Create(path, content)
+	_, err := database.DB().Documents().Create(path, content)
 
-	return nil
+	return err
 }
 
 func Documents() *documents {
