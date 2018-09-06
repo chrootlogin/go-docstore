@@ -1,8 +1,8 @@
 package store
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestDocuments(t *testing.T) {
