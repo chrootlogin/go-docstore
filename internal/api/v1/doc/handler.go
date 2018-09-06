@@ -13,6 +13,7 @@ import (
 )
 
 type ApiDocument struct {
+	Name    string `json:"name"`
 	Content string `json:"content"`
 }
 
@@ -43,4 +44,28 @@ func CreateDocumentHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, common.ApiResponse{Message: fmt.Sprintf("created document: %s", docUuid)})
+}
+
+func ReadDocumentHandler(c *gin.Context) {
+	path := c.Param("path")
+	if len(path) <= 1 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.ApiResponse{Message: common.WrongAPIUsageError})
+		return
+	}
+
+	doc, err := database.DB().Documents().Read(path)
+	if err != nil {
+		if err == database.ErrNotFound {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.ApiResponse{Message: "not found"})
+			return
+		}
+
+		log.Println(err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{Message: "error saving document"})
+		return
+	}
+
+	c.JSON(http.StatusOK, ApiDocument{
+		Name: doc.Name,
+	})
 }

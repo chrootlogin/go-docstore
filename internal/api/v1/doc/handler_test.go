@@ -3,51 +3,51 @@ package doc
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/json"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/chrootlogin/go-docstore/internal/database"
 )
 
+type TestCases struct {
+	Name    string
+	Path    string
+	Content []byte
+	Status  int
+}
+
+var testCases = []TestCases{
+	{
+		Name:    "index.md",
+		Path:    "/index.md",
+		Content: []byte("# Hello\nThis is an index file"),
+		Status:  http.StatusCreated,
+	},
+	{
+		Name:    "mammut.md",
+		Path:    "/docs/mammut.md",
+		Content: []byte("### This is a mammut"),
+		Status:  http.StatusCreated,
+	},
+	{
+		Path:    "/docs/",
+		Content: []byte("Test 1234"),
+		Status:  http.StatusInternalServerError,
+	},
+	{
+		Path:    "/",
+		Content: []byte("Test 1234"),
+		Status:  http.StatusBadRequest,
+	},
+}
+
 func TestCreateDocumentHandler(t *testing.T) {
 	assert := assert.New(t)
-
-	type TestCases struct {
-		Name    string
-		Path    string
-		Content []byte
-		Status  int
-	}
-
-	testCases := []TestCases{
-		{
-			Name:    "index.md",
-			Path:    "/index.md",
-			Content: []byte("# Hello\nThis is an index file"),
-			Status:  http.StatusCreated,
-		},
-		{
-			Name:    "mammut.md",
-			Path:    "/docs/mammut.md",
-			Content: []byte("### This is a mammut"),
-			Status:  http.StatusCreated,
-		},
-		{
-			Path:    "/docs/",
-			Content: []byte("Test 1234"),
-			Status:  http.StatusInternalServerError,
-		},
-		{
-			Path:    "/",
-			Content: []byte("Test 1234"),
-			Status:  http.StatusBadRequest,
-		},
-	}
 
 	for _, testCase := range testCases {
 		t.Log(testCase.Path)
@@ -108,4 +108,59 @@ func TestCreateDocumentHandler3(t *testing.T) {
 
 		assert.Equal(http.StatusInternalServerError, w.Code)
 	}
+}
+
+func TestReadDocumentHandler(t *testing.T) {
+	assert := assert.New(t)
+
+	for _, testCase := range testCases {
+		if testCase.Status != http.StatusCreated {
+			continue
+		}
+
+		t.Log(testCase.Path)
+
+		w := httptest.NewRecorder()
+
+		r := gin.Default()
+		r.GET("/doc/*path", ReadDocumentHandler)
+
+		req, _ := http.NewRequest("GET", "/doc"+testCase.Path, nil)
+		r.ServeHTTP(w, req)
+
+		if assert.Equal(http.StatusOK, w.Code) {
+			var doc ApiDocument
+			err := json.Unmarshal(w.Body.Bytes(), &doc)
+
+			if assert.NoError(err) {
+				assert.Equal(testCase.Name, doc.Name)
+			}
+		}
+	}
+}
+
+func TestReadDocumentHandler2(t *testing.T) {
+	assert := assert.New(t)
+	w := httptest.NewRecorder()
+
+	r := gin.Default()
+	r.GET("/doc/*path", ReadDocumentHandler)
+
+	req, _ := http.NewRequest("GET", "/doc/not-existing.md", nil)
+	r.ServeHTTP(w, req)
+
+	assert.Equal(http.StatusNotFound, w.Code)
+}
+
+func TestReadDocumentHandler3(t *testing.T) {
+	assert := assert.New(t)
+	w := httptest.NewRecorder()
+
+	r := gin.Default()
+	r.GET("/doc/*path", ReadDocumentHandler)
+
+	req, _ := http.NewRequest("GET", "/doc/", nil)
+	r.ServeHTTP(w, req)
+
+	assert.Equal(http.StatusBadRequest, w.Code)
 }
