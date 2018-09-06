@@ -2,6 +2,10 @@ package helper
 
 import (
 	"testing"
+	"github.com/stretchr/testify/assert"
+	"net/http/httptest"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func TestHashPassword(t *testing.T) {
@@ -43,4 +47,35 @@ func TestCheckPasswordHash(t *testing.T) {
 			t.Errorf("Password check on %s was not expected result", test.ClearTextPassword)
 		}
 	}
+}
+
+func TestForbidden(t *testing.T) {
+	assert := assert.New(t)
+	w := httptest.NewRecorder()
+
+	r := gin.Default()
+	r.GET("/", func(context *gin.Context) {
+		Forbidden("access forbidden", context)
+	})
+
+	req, _ := http.NewRequest("GET", "/", nil)
+	r.ServeHTTP(w, req)
+
+	assert.Equal(http.StatusForbidden, w.Code)
+}
+
+func TestUnauthorized(t *testing.T) {
+	assert := assert.New(t)
+	w := httptest.NewRecorder()
+
+	r := gin.Default()
+	r.GET("/", func(context *gin.Context) {
+		Unauthorized(context)
+	})
+
+	req, _ := http.NewRequest("GET", "/", nil)
+	r.ServeHTTP(w, req)
+
+	assert.Equal(http.StatusUnauthorized, w.Code)
+	assert.Equal("JWT realm=go-docstore", w.Header().Get("WWW-Authenticate"))
 }
