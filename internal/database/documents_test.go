@@ -108,3 +108,12 @@ func TestDocumentsDB_Read(t *testing.T) {
 
 	}
 }
+
+func TestDocumentsDB_Read2(t *testing.T) {
+	assert := assert.New(t)
+
+	_, err := DB().Documents().Read("/not-existing.md")
+	if assert.Error(err) {
+		assert.Equal(ErrNotFound, err)
+	}
+}
