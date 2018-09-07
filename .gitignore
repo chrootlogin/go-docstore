@@ -1,7 +1,7 @@
 vendor/
 data.db
 .env
-/go-docstore-server
+/go-docstore
 
 # Created by .ignore support modules (hsz.mobi)
 ### Linux template
