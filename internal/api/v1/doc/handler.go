@@ -65,7 +65,17 @@ func ReadDocumentHandler(c *gin.Context) {
 		return
 	}
 
+	// load last revision
+	content, err := database.DB().Documents().ReadFile(doc.Revisions[0].FileHash)
+	if err != nil {
+		log.Println(err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{Message: "error saving document"})
+		return
+	}
+
+	data := base64.StdEncoding.EncodeToString(content)
 	c.JSON(http.StatusOK, ApiDocument{
 		Name: doc.Name,
+		Content: data,
 	})
 }

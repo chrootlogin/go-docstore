@@ -134,6 +134,11 @@ func TestReadDocumentHandler(t *testing.T) {
 
 			if assert.NoError(err) {
 				assert.Equal(testCase.Name, doc.Name)
+
+				data, err := base64.StdEncoding.DecodeString(doc.Content)
+				if assert.NoError(err) {
+					assert.Equal(testCase.Content, data)
+				}
 			}
 		}
 	}

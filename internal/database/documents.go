@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/chrootlogin/go-docstore/pkg/docstore"
+	"sort"
 )
 
 const (
@@ -54,7 +55,9 @@ func (d *DocumentsDB) Create(path string, content []byte) (uuid.UUID, error) {
 		},
 	}
 
-	fmt.Println(doc)
+	sort.Slice(doc.Revisions, func(i, j int) bool {
+		return doc.Revisions[i].Time.Before(doc.Revisions[j].Time)
+	})
 
 	node := travelPath(dir, d.r.From(ROOT_NODE))
 
@@ -94,6 +97,22 @@ func (d *DocumentsDB) Read(path string) (*docstore.Document, error) {
 	}
 
 	return &document, nil
+}
+
+func (d *DocumentsDB) ReadFile(hash [sha256.Size]byte) ([]byte, error) {
+	node := d.r.From(DATA_NODE)
+
+	var file docstore.File
+	err := node.One("Hash", hash, &file)
+	if err != nil {
+		if err == storm.ErrNotFound {
+			return nil, ErrNotFound
+		}
+
+		return nil, err
+	}
+
+	return file.Content, nil
 }
 
 func (d *DocumentsDB) saveFile(content []byte) ([sha256.Size]byte, error) {
