@@ -2,7 +2,6 @@ package database
 
 import (
 	"crypto/sha256"
-	"fmt"
 	"path/filepath"
 	"time"
 
@@ -63,7 +62,6 @@ func (d *DocumentsDB) Create(path string, content []byte) (uuid.UUID, error) {
 	node := travelPath(dir, d.r.From(ROOT_NODE))
 
 	var document docstore.Document
-	fmt.Println("Doc")
 	err = node.One("Name", file, &document)
 	if err != nil {
 		if err == storm.ErrNotFound {
@@ -122,8 +120,6 @@ func (d *DocumentsDB) saveFile(content []byte) ([sha256.Size]byte, error) {
 	node := d.r.From(DATA_NODE)
 
 	var file docstore.File
-
-	fmt.Println("File")
 	err := node.One("Hash", hash, &file)
 	if err != nil {
 		// save
