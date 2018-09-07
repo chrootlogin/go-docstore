@@ -55,6 +55,7 @@ func (d *DocumentsDB) Create(path string, content []byte) (uuid.UUID, error) {
 		},
 	}
 
+	// sort file revisions
 	sort.Slice(doc.Revisions, func(i, j int) bool {
 		return doc.Revisions[i].Time.Before(doc.Revisions[j].Time)
 	})
