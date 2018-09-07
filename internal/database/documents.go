@@ -3,13 +3,13 @@ package database
 import (
 	"crypto/sha256"
 	"path/filepath"
+	"sort"
 	"time"
 
 	"github.com/asdine/storm"
 	"github.com/google/uuid"
 
 	"github.com/chrootlogin/go-docstore/pkg/docstore"
-	"sort"
 )
 
 const (

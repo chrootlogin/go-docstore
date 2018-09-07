@@ -75,7 +75,7 @@ func ReadDocumentHandler(c *gin.Context) {
 
 	data := base64.StdEncoding.EncodeToString(content)
 	c.JSON(http.StatusOK, ApiDocument{
-		Name: doc.Name,
+		Name:    doc.Name,
 		Content: data,
 	})
 }

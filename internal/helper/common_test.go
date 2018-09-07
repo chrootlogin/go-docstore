@@ -1,11 +1,11 @@
 package helper
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
-	"net/http/httptest"
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 func TestHashPassword(t *testing.T) {
