@@ -61,7 +61,7 @@ func ReadDocumentHandler(c *gin.Context) {
 		}
 
 		log.Println(err.Error())
-		c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{Message: "error saving document"})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{Message: "error reading document"})
 		return
 	}
 
@@ -69,7 +69,7 @@ func ReadDocumentHandler(c *gin.Context) {
 	content, err := database.DB().Documents().ReadFile(doc.Revisions[0].FileHash)
 	if err != nil {
 		log.Println(err.Error())
-		c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{Message: "error saving document"})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, common.ApiResponse{Message: "error loading file"})
 		return
 	}
 
