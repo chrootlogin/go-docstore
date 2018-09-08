@@ -2,9 +2,9 @@ package database
 
 import (
 	"testing"
+	"crypto/sha256"
 
 	"github.com/stretchr/testify/assert"
-	"crypto/sha256"
 )
 
 func TestDb_Documents(t *testing.T) {
