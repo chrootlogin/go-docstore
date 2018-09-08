@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"crypto/sha256"
 )
 
 func TestDb_Documents(t *testing.T) {
@@ -99,6 +100,11 @@ func TestDocumentsDB_Read(t *testing.T) {
 		if testCase.Correct {
 			if assert.NoError(err) {
 				assert.Equal(testCase.Name, doc.Name)
+
+				content, err := DB().Documents().ReadFile(doc.Revisions[0].FileHash)
+				if assert.NoError(err) {
+					assert.Equal(testCase.Content, content)
+				}
 			}
 		} else {
 			if assert.Error(err) {
@@ -115,5 +121,16 @@ func TestDocumentsDB_Read2(t *testing.T) {
 	_, err := DB().Documents().Read("/not-existing.md")
 	if assert.Error(err) {
 		assert.Equal(ErrNotFound, err)
+	}
+}
+
+// Not existing file
+func TestDocumentsDB_ReadFile(t *testing.T) {
+	assert := assert.New(t)
+
+	hash := sha256.Sum256([]byte("This is a non-existing document"))
+	_, err := DB().Documents().ReadFile(hash)
+	if assert.Error(err) {
+		assert.Equal(err, ErrNotFound)
 	}
 }
