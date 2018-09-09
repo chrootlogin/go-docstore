@@ -14,6 +14,7 @@ import (
 	"github.com/chrootlogin/go-docstore/internal/common"
 	"github.com/chrootlogin/go-docstore/internal/helper"
 	"github.com/chrootlogin/go-docstore/internal/store"
+	"github.com/chrootlogin/go-docstore/internal/database"
 )
 
 type AuthMiddleware struct {
@@ -106,7 +107,7 @@ func (am *AuthMiddleware) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	user, err := store.Users().Get(loginData.Username)
+	user, err := database.DB().User().Get(loginData.Username)
 	if err == nil {
 		if !helper.CheckPasswordHash(loginData.Password, user.PasswordHash) {
 			am.wrongUsernamePassword(c)

@@ -7,10 +7,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/chrootlogin/go-docstore/internal/common"
-	"github.com/chrootlogin/go-docstore/internal/store"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/chrootlogin/go-docstore/internal/common"
+	"github.com/chrootlogin/go-docstore/internal/store"
 )
 
 // try existing user

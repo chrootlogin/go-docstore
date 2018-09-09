@@ -22,11 +22,6 @@ func init() {
 type userList struct{}
 
 func (ul *userList) Get(username string) (*common.User, error) {
-	u, found := userCache.Get(username)
-	if found {
-		return u.(*common.User), nil
-	}
-
 	var user common.User
 	err := database.DB().Users().One("Username", username, &user)
 	if err != nil {
@@ -36,8 +31,6 @@ func (ul *userList) Get(username string) (*common.User, error) {
 
 		return nil, err
 	}
-
-	userCache.Set(username, &user, cache.DefaultExpiration)
 
 	return &user, nil
 }
