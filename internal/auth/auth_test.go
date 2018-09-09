@@ -59,7 +59,7 @@ func TestAuthMiddleware_LoginHandler2(t *testing.T) {
 	assert := assert.New(t)
 
 	const USERNAME = "admin"
-	const PASSWORD = "test1234"
+	const PASSWORD = "admin"
 
 	hash, err := helper.HashPassword(PASSWORD)
 	if assert.NoError(err) {
