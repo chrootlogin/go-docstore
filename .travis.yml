@@ -1,5 +1,7 @@
 env:
 - DEP_VERSION="0.5.0"
+- BINTRAY_USERNAME="rootlogin"
+- secure: TIvUiVGIy6iCcSZunHS/bn2dWV3bzKdvD9E3BJCcotSUVIP+JGG7jADufkvO6oPZMGMUCBECdP//KoJJxHsHtLWP4AwaaFGmlU+mnKjX+eXzY3wKRnh/CefR/W1f6ORyoUqVOtqHy00GN4T59R2/zeRB2ccThKuOp0MfjEU8RJoDV/0YrX8uBZDrmTOGpig8tpKtO4q0PvnW9QChgqmILnTxv0o3nkE/vzxwoC3soD1dgncobZCUwqQIsQihrQUZxxofHQqS4yH9WUsI0HKfE4Wn2Kjtj7izsFAE2TC/neXSiKaElydn27m/UJCZV06wK7SmF6KDFrWVF3yjcyVaOV4pxmbpq8Bu3eJfYn7D+MIm9kEECoCdDVGULOprkUlX2Mho7m8B1g3iXoUSMHK6NrfKaM665/oZPxlUuZLx9fPIacXFYzAU4CFlvfwc6O2OnV+GXzosr10OYcYMcfnW/BEOXKBdAmbBeJm292L7Ifi4CuP4G0xyK4MsU3Q83YF+4Mpo+E+GSJj9PlhCe/A2WW2rewr9bTlXMHe2ZjEX3P9HGwyzSDvDfhXlgrz4qpyeJrWAmV6i1yW/vD688HPJ13EUVHMQsxQ53A++k9Rl2dxEK7wgXebAffntaz48lhgKYBPUiV7Pnp93BjMx9H2iGBSDBvtUZJEkUJ613V6msyU=
 
 jobs:
   include:
@@ -31,6 +33,19 @@ jobs:
     - go test -json -coverprofile=coverage.out ./... > test-report.out
     - sonar-scanner
     - make go_app
+
+    deploy:
+    - provider: script
+      script: curl -T "go-docstore" -u "$BINTRAY_USERNAME:$BINTRAY_API_KEY" -H "X-Bintray-Publish:1" -H "X-Bintray-Package:linux" -H "X-Bintray-Version:master" -H "X-Bintray-Override:1" "https://api.bintray.com/content/rootlogin/go-docstore/master/go-docstore"
+      skip_cleanup: true
+      on:
+        branch: master
+
+    - provider: script
+      script: curl -T "go-docstore" -u "$BINTRAY_USERNAME:$BINTRAY_API_KEY" -H "X-Bintray-Publish:1" -H "X-Bintray-Package:linux" -H "X-Bintray-Version:$TRAVIS_TAG" -H "X-Bintray-Override:1" "https://api.bintray.com/content/rootlogin/go-docstore/$TRAVIS_TAG/go-docstore"
+      skip_cleanup: true
+      on:
+        tags: true
 
 notifications:
   pushover:
